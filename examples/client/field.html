@@ -5,44 +5,50 @@
 </head>
 
 <body>
-  <form>
+  <form id="wfs-config">
 
     <label for="userName">userName</label>
     <input type="text" id="userName" name="userName">
-    <br>
+    <br />
 
     <label for="userId">userId</label>
     <input type="text" id="userId" name="userId" />
-    <br>
+    <br />
 
     <label for="roomId">roomId</label>
     <input type="text" id="roomId" name="roomId" />
-    <br>
+    <br />
 
     <label for="updateEvent">updateEvent</label>
     <input type="text" id="updateEvent" name="updateEvent" />
-    <br>
+    <br />
 
     <label for="eventElementId">eventElementId</label>
     <input type="text" id="eventElementId" name="eventElementId" />
-    <br>
+    <br />
 
     <label for="syncType">syncType</label>
     <input type="text" id="syncType" name="syncType" />
-    <br>
+    <br />
 
-    <textarea id="targetField" name="targetField">
-This is the target field.
-    </textarea>
-    <br>
+    <button type="submit">configure</button>
+  </form>
 
-    <!-- <button>connect</button> -->
-    <button type="submit">send</button>
+  <form id="wfs-data">
+    <textarea id="targetField" name="targetField">This is the target field.</textarea>
+    <br />
+
+    <button type="submit" id="wfs-connect">connect</button>
   </form>
 </body>
 
 <script>
-  function collectData(event) {
+  function handleConnect(event) {
+    event.preventDefault();
+    console.log('doConnect()')
+  };
+
+  function handleConfigure(event) {
     event.preventDefault();
     const data = new FormData(event.target);
     const value = Object.fromEntries(data.entries());
@@ -50,7 +56,8 @@ This is the target field.
     console.log(value);
   }
 
-  document.querySelector('form').addEventListener('submit', collectData);
+  document.getElementById('wfs-config').addEventListener('submit', handleConfigure);
+  document.getElementById('wfs-data').addEventListener('submit', handleConnect);
 </script>
 
 </html>
