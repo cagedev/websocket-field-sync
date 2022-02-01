@@ -36,13 +36,21 @@ This is the target field.
     </textarea>
     <br>
 
-    <button>connect</button>
-    <button>send</button>
+    <!-- <button>connect</button> -->
+    <button type="submit">send</button>
   </form>
 </body>
 
 <script>
+  function collectData(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const value = Object.fromEntries(data.entries());
+    // console.log(JSON.stringify(value, null, 2));
+    console.log(value);
+  }
 
+  document.querySelector('form').addEventListener('submit', collectData);
 </script>
 
 </html>
