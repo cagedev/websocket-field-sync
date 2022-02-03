@@ -1,18 +1,30 @@
 <html>
 
 <head>
+  <style type="text/css">
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+      font-size: small;
+      margin: 2px;
+    }
 
+    body {
+      margin: 20px;
+      background-color: #fafafa;
+    }
+  </style>
 </head>
 
 <body>
   <form id="wfs-config">
 
-    <label for="userName">server</label>
-    <input type="text" id="server" name="server">
+    <label for="serverUrl">serverUrl</label>
+    <input type="text" id="serverUrl" name="serverUrl" value="ws://127.0.0.1:8080">
     <br />
 
     <label for="userName">userName</label>
-    <input type="text" id="userName" name="userName">
+    <input type="text" id="userName" name="userName" value="Test User">
     <br />
 
     <label for="userId">userId</label>
@@ -43,10 +55,12 @@
     <br />
 
     <button type="submit" id="wfs-connect">connect</button>
+    <button type="button" id="wfs-send">send</button>
   </form>
 </body>
 
 <script>
+  var wfsConnection = null;
   var wfsConfig = {}
   var wfsData = {
     userName: '',
@@ -67,12 +81,25 @@
 
   function handleConnect(event) {
     event.preventDefault();
-    console.log('doConnect()')
+
+    wfsConnection = new WebSocket(wfsConfig.serverUrl, "json");
+
+    wfsConnection.onopen = function (event) {
+      // DEBUG
+      console.log("wfsConnection.onopen");
+    };
+
+    wfsConnection.onmessage = function (event) {
+      // DEBUG
+      console.log("wfsConnection.onmessage");
+      console.log(event.data);
+    };
+
 
     // TODO
     // setup wfs-link with current parameters
-    // ? auth on server
-    // - connect to server
+    // ? auth on serverUrl
+    // - connect to serverUrl
     // - send setup message
     // - set local data event handler
     //   - on event
@@ -85,9 +112,19 @@
 
   };
 
+  function handleSend(event) {
+    let message = {
+      type: "message",
+      data: "TEST",
+    }
+    console.log('handleSend', message);
+    wfsConnection.send(JSON.stringify(message));
+  }
+
   // Set up event handlers
   document.getElementById('wfs-config').addEventListener('submit', handleConfigure);
   document.getElementById('wfs-data').addEventListener('submit', handleConnect);
+  document.getElementById('wfs-send').addEventListener('click', handleSend);
 </script>
 
 </html>
