@@ -7,6 +7,10 @@
 <body>
   <form id="wfs-config">
 
+    <label for="userName">server</label>
+    <input type="text" id="server" name="server">
+    <br />
+
     <label for="userName">userName</label>
     <input type="text" id="userName" name="userName">
     <br />
@@ -43,19 +47,45 @@
 </body>
 
 <script>
-  function handleConnect(event) {
-    event.preventDefault();
-    console.log('doConnect()')
-  };
+  var wfsConfig = {}
+  var wfsData = {
+    userName: '',
+    userId: '',
+    roomId: '',
+    syncType: '',
+  }
 
+  // Event handlers
   function handleConfigure(event) {
     event.preventDefault();
     const data = new FormData(event.target);
-    const value = Object.fromEntries(data.entries());
-    // console.log(JSON.stringify(value, null, 2));
-    console.log(value);
+    wfsConfig = Object.fromEntries(data.entries());
+
+    // DEBUG
+    console.log(wfsConfig);
   }
 
+  function handleConnect(event) {
+    event.preventDefault();
+    console.log('doConnect()')
+
+    // TODO
+    // setup wfs-link with current parameters
+    // ? auth on server
+    // - connect to server
+    // - send setup message
+    // - set local data event handler
+    //   - on event
+    //   - update data package
+    //   - send data
+    // - set external event handler
+    //   - on message
+    //   - update local data package
+    //   - update local data field (do not fire handler)
+
+  };
+
+  // Set up event handlers
   document.getElementById('wfs-config').addEventListener('submit', handleConfigure);
   document.getElementById('wfs-data').addEventListener('submit', handleConnect);
 </script>
