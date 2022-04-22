@@ -2,7 +2,7 @@
   "name": "wfs-server",
   "version": "0.0.1",
   "description": "\"Websocket relay server for websocket-field-sync library.\"",
-  "main": "server.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
