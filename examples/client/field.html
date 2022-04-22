@@ -28,11 +28,11 @@
     <br />
 
     <label for="userId">userId</label>
-    <input type="text" id="userId" name="userId" value="NIL" />
+    <input type="text" id="userId" name="userId" value="00000000-0000-0000-0000-000000000000" />
     <br />
 
     <label for="roomId">roomId</label>
-    <input type="text" id="roomId" name="roomId" />
+    <input type="text" id="roomId" name="roomId" value="default" />
     <br />
 
     <label for="dataElementId">dataElementId</label>
@@ -40,11 +40,11 @@
     <br />
 
     <label for="updateEvent">updateEvent</label>
-    <input type="text" id="updateEvent" name="updateEvent" />
+    <input type="text" id="updateEvent" name="updateEvent" value="onchange" />
     <br />
 
     <label for="eventElementId">eventElementId</label>
-    <input type="text" id="eventElementId" name="eventElementId" />
+    <input type="text" id="eventElementId" name="eventElementId" value="targetField" />
     <br />
 
     <label for="syncType">syncType</label>
@@ -76,6 +76,19 @@
     syncType: '',
   }
 
+
+  function updateWfsData() {
+    // Hacky because no two way sync
+    // This should include the connections as an array
+
+    // Update relevant part of wfsData from wfsConfig
+    wfsData.roomId = wfsConfig.roomId;
+    wfsData.syncType = wfsConfig.syncType;
+    wfsData.userId = wfsConfig.userId;
+    wfsData.userName = wfsConfig.userName;
+  }
+
+
   // Event handlers
   // => handleConfigureButton?
   function handleConfigureButton(event) {
@@ -85,6 +98,21 @@
 
     // DEBUG
     console.log('wfsConfig', wfsConfig);
+
+    // Set event handler
+    let evt = wfsConfig.updateEvent;
+    let id = wfsConfig.eventElementId;
+    document.getElementById(id).addEventListener(evt, function (event) {
+      console.log(event);
+      updateWfsData();
+      wfsConnection.send(JSON.stringify({
+        event: "DATA_MESSAGE",
+        wfsData: wfsData,
+        payload: {
+          messageData: document.getElementById(id).value,
+        }
+      }));
+    })
   }
 
   // => handleConnectButtonButton?
@@ -99,6 +127,7 @@
 
       // TODO request connectionId
       // TODO define datastructure
+      updateWfsData();
       wfsConnection.send(JSON.stringify({
         event: "SERVER_REQUEST",
         wfsData: wfsData,
@@ -120,20 +149,46 @@
 
       // Interpret message
       // Assume event/payload-structure
+      // Use a connection structure
       switch (msg.event) {
+
         case "MESSAGE":
           console.log("MESSAGE:", msg.payload);
           break;
+
         case "RESPONSE":
           console.log("RESPONSE:", msg.payload);
-          wfsConfig.userId = msg.payload.value;
+
+          if (msg.payload.var == "USER_ID") {
+            wfsConfig.userId = msg.payload.value;
+            document.getElementById("userId").value = wfsConfig.userId;
+            updateWfsData();
+            wfsConnection.send(JSON.stringify({
+              event: "SERVER_REQUEST",
+              wfsData: wfsData,
+              payload: {
+                requestedData: "ROOM_ID",
+              }
+            }));
+          }
+
+          else if (msg.payload.var == "ROOM_ID") {
+            wfsConfig.roomId = msg.payload.value;
+            document.getElementById("roomId").value = wfsConfig.roomId;
+          }
+
+          else {
+            console.log("Error: Invalid RESPONSE payload", msg.payload);
+          }
           break;
+
         case "UPDATE":
           console.log("UPDATE:", msg.payload);
           wfsConfig.state = msg.payload.state;
           // DEBUG
           console.log("wfsConfig:", wfsConfig);
           break;
+
         default:
           console.log("Unrecognised message:", msg);
       }
@@ -156,12 +211,8 @@
   };
 
   function handleSendButton(event) {
-    // Update relevant part of wfsData from wfsConfig
-    wfsData.roomId = wfsConfig.roomId;
-    wfsData.syncType = wfsConfig.syncType;
-    wfsData.userId = wfsConfig.userId;
-    wfsData.userName = wfsConfig.userName;
     // TODO use prototype 
+    updateWfsData();
     let msg = {
       event: "DATA_MESSAGE",
       wfsData: wfsData,
