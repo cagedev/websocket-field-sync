@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dirty": "^1.1.3",
+    "dirty": "github:pathsny/node-dirty",
     "uuid": "^8.3.2",
     "ws": "^8.4.2",
     "yup": "^0.32.11"
