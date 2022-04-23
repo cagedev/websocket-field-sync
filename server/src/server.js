@@ -4,9 +4,10 @@ import { v4 as uuid_v4 } from 'uuid';
 // console.log(uuid_NIL);
 import * as yup from 'yup';
 
-import { UserDB, MessageDB } from './models/db.js'
+import { UserDB, MessageDB } from './models/db.js';
+import { User } from './models/user.js';
 
-import { isUUID } from './utils/utils.js'; 
+import { isUUID } from './utils/utils.js';
 
 var userdb = new UserDB();
 var msgdb = new MessageDB();
@@ -25,7 +26,9 @@ const messageSchema = yup.object({
         userId: yup.string().test(
             'isUUID',
             "Invalid value for ${path} (${value})",
-            function (value) { return isUUID(value) },
+            function (value) {
+                return isUUID(value)
+            },
         ),
         roomId: yup.string().required(),
         syncType: yup.string(), // from list
@@ -48,12 +51,24 @@ function parseMessage(messageString) {
     return msg;
 }
 
-
-// const connections = {} // (rooms -> users)
-
 const wss = new WebSocketServer({ port: 8080 });
 
 wss.on('connection', function connection(ws) {
+
+    // DEBUG -> tests
+    // userdb.registerUser();
+    let usr2 = new User({
+        name: 'Test 02',
+        roomIds: [],
+        permissions: {
+            maxRooms: 1,
+            createUser: false,
+            editUser: false,
+        },
+        lastSeen: null,
+    });
+    userdb.registerUser(usr2);
+    userdb.removeUserById(usr2.getUserId());
 
     ws.send(JSON.stringify({
         event: 'UPDATE',
@@ -75,15 +90,17 @@ wss.on('connection', function connection(ws) {
 
 
         if (msg.event == 'SERVER_REQUEST') {
+            userdb.registerUser()
+
             // handle request
             if (msg.payload.requestedData == 'USER_ID') {
                 // generate id
                 // let userId = uuid_NIL;
                 let userId = uuid_v4();
                 // set messages list for id to empty array
-                msgdb.set(userId, JSON.stringify(
+                msgdb.set(userId,
                     { history: [], roomIds: [] } // also empty array for roomIds?
-                ))
+                );
                 // send RESPONSE
                 ws.send(
                     JSON.stringify({
@@ -148,7 +165,7 @@ wss.on('connection', function connection(ws) {
 
             }
             else {
-                console.log("[Error] Unrecognized SERVER_REQUEST:", msg.payload.requestedData)
+                console.log(`[Error] Unrecognized SERVER_REQUEST: ${msg.payload.requestedData}`)
             }
         }
         else if (msg.type = 'DATA_MESSAGE') {
