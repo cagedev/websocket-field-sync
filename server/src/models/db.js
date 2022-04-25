@@ -1,6 +1,6 @@
 import pkg from 'dirty';
-import { User } from './user.js';
 const { Dirty } = pkg;
+import { User } from './user.js';
 import { v4 as uuid_v4 } from 'uuid';
 
 // NOTES
@@ -32,16 +32,18 @@ class Database {
         this.type = type;
         this.db = new Dirty(this.filename);
 
-        this.db.on('load', function (length) {
-            console.log(`Loaded ${type} containing ${length} records; ${this.redundantLength} are redundant.`);
+        this.db.on('load', (length) => {
+            console.log(`Loaded ${type} containing ${length} records; ${this.db.redundantLength} are redundant.`);
         });
 
-        this.db.on('drain', function () {
-            this.compact();
-            console.log(`All records saved to disk; ${this.redundantLength} redundant records.`);
+        // DEBUG
+        this.db.on('drain', () => {
+            this.db.compact();
+            console.log(`All records saved to disk; ${this.db.redundantLength} redundant records.`);
         });
 
-        this.db.on('compacted', function() {
+        // DEBUG
+        this.db.on('compacted', () => {
             console.log('Database compacted.');
         });
     }
@@ -87,7 +89,7 @@ class Database {
 }
 
 /**
- * Creates a database for userdata
+ * A database for user data.
  * 
  * @extends Database
  * 
@@ -99,7 +101,7 @@ export class UserDB extends Database {
     }
 
     /**
-     * Registers user in database.
+     * Registers user in database. User's ID is created uniquely.
      * 
      * @param {object} user - the User object
      * @returns {(object|null)}  null in case of error; otherwise it returns a validated user object
@@ -138,14 +140,24 @@ export class UserDB extends Database {
 }
 
 /**
- * Creates a database for messagedata.
+ * A database for room data.
  * 
  * @extends Database
  * 
  * TODO: Handle data validation according to schema.
  */
-export class MessageDB extends Database {
-    constructor(filename = './data/messages.json') {
-        super(filename, "MESSAGES_DB");
+export class RoomDB extends Database {
+    constructor(filename = './data/rooms.json') {
+        super(filename, 'ROOM_DB');
+    }
+
+    addMessage(msg) {
+        // Future
+        // this.db.set(msg.header.roomId, msg.payload.value);
+
+        // Future2
+        // this.db.update(msg.header.roomId, updatefunction to append to value history queue);
+
+        this.db.set(msg.header.roomId, msg.payload.messageData);
     }
 }

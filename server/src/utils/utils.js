@@ -1,3 +1,9 @@
+/**
+ * Checks if a given string is a valid uuid.
+ * 
+ * @param {string} uuid 
+ * @returns 
+ */
 export function isUUID(uuid) {
 
     let s = "" + uuid;
