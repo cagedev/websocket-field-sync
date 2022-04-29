@@ -23,6 +23,10 @@
     <input type="text" id="serverUrl" name="serverUrl" value="ws://127.0.0.1:8080">
     <br />
 
+    <label for="token">token</label>
+    <input type="text" id="token" name="token" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">
+    <br />
+
     <label for="userName">userName</label>
     <input type="text" id="userName" name="userName" value="Test User">
     <br />
@@ -118,7 +122,7 @@
   // => handleConnectButtonButton?
   function handleConnectButton(event) {
     event.preventDefault();
-    wfsConnection = new WebSocket(wfsConfig.serverUrl, "json");
+    wfsConnection = new WebSocket(`${wfsConfig.serverUrl}?token=${wfsConfig.token}`, "json");
 
     wfsConnection.onopen = function (event) {
 

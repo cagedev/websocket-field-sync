@@ -7,6 +7,12 @@ import { User } from './models/user.js';
 // import { parseMessage } from './utils/utils.js';
 import { Message } from './models/message.js';
 
+import pkg from 'jsonwebtoken';
+const { verify: jwtVerify } = pkg;
+
+// TODO Load from environment
+var jwtSecret = '$igningKey'
+
 // Load the default users database
 var userdb = new UserDB();
 
@@ -14,7 +20,19 @@ var userdb = new UserDB();
 var roomdb = new RoomDB();
 
 // Create WebSocketServer
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({
+    port: 8080,
+    verifyClient: (info, done) => { 
+        let token = new URL(info.req.url, `http://${info.req.headers.host}`).searchParams.get('token');
+        console.log(token);
+
+        let decoded = jwtVerify(token, jwtSecret);
+        console.log(decoded.userId);
+
+        // console.log(info.req.headers.host);
+        done(false);
+    }
+});
 
 
 // TODO refactor (websocket) logic into modules
@@ -29,7 +47,10 @@ const wss = new WebSocketServer({ port: 8080 });
 //      - case almost expired: request extension
 // 2. Create room
 // 3. Handle messages
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws, request) {
+
+    // console.log(ws._socket.address());
+    // console.log(new URL(request.url, `http://${request.headers.host}`).searchParams.get('token'));
 
     // DEBUG -> tests
     // userdb.registerUser();
