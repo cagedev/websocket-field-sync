@@ -3,6 +3,7 @@ const { Dirty } = pkg;
 import { User } from './user.js';
 import { v4 as uuid_v4 } from 'uuid';
 
+
 // NOTES
 // TODO class UserDB
 // - [ ] check_password()
@@ -25,7 +26,7 @@ class Database {
      * (Creates and) Loads a database from file.
      * 
      * @param {string} filename
-     * @param {string} type - 'USER_DB' | 'MESSAGE_DB'
+     * @param {string} type - 'USER_DB' | 'ROOM_DB'
      */
     constructor(filename, type) {
         this.filename = filename;
@@ -37,26 +38,15 @@ class Database {
         });
 
         // DEBUG
-        this.db.on('drain', () => {
-            this.db.compact();
-            console.log(`All records saved to disk; ${this.db.redundantLength} redundant records.`);
-        });
+        // this.db.on('drain', () => {
+        //     this.db.compact();
+        //     console.log(`All records saved to disk; ${this.db.redundantLength} redundant records.`);
+        // });
 
         // DEBUG
-        this.db.on('compacted', () => {
-            console.log('Database compacted.');
-        });
-    }
-
-    /**
-     * Write key-value pair to database.
-     * Handles serialization.
-     * 
-     * @param {string} key - key
-     * @param {object} value - value, can be any object
-     */
-    set(key, value) {
-        this.db.set(key, JSON.stringify(value)); // default behavior
+        // this.db.on('compacted', () => {
+        //     console.log('Database compacted.');
+        // });
     }
 
     /**
@@ -68,6 +58,7 @@ class Database {
      */
     get(key) {
         let value = this.db.get(key);
+        // console.log(value);
         try {
             value = JSON.parse(value);
         }
@@ -79,11 +70,34 @@ class Database {
     }
 
     /**
+     * Removes key from the database.
      * 
-     * @param {*} key 
+     * @param {string} key - key
      */
     remove(key) {
         this.db.rm(key);
+    }
+
+    /**
+     * Write key-value pair to database.
+     * Handles serialization.
+     * 
+     * @param {string} key - key
+     * @param {object} value - value, can be any object
+     */
+    set(key, value) {
+        this.db.set(key, JSON.stringify(value));
+    }
+
+    /**
+     * Update key-value pair in the database.
+     * 
+     * @param {string} key - key
+     * @param {function(object): object} updater - updater function that is passed the current value of the key and;
+     *                                             returns the new value of the key 
+     */
+    update(key, updater) {
+        this.set(key, updater(this.get(key)));
     }
 
 }
@@ -101,41 +115,72 @@ export class UserDB extends Database {
     }
 
     /**
-     * Registers user in database. User's ID is created uniquely.
+     * Find a user with a certain id (basic lookup)
      * 
-     * @param {object} user - the User object
+     * @param {string} id - the user id
      * @returns {(object|null)}  null in case of error; otherwise it returns a validated user object
      */
-    registerUser(user) {
-        if (user instanceof User) {
-            let id = user.getUserId()
-
-            // Check userId against database
-            if (this.db.get(id)) {
-                console.log(`ERROR: UserId ${userId} already exists.`)
-                return null;
-            }
-            else {
-                this.db.set(id, user.getUserData());
-                return user;
-            }
+    getUserById(id) {
+        let _usr = this.get(id);
+        if (_usr) {
+            // TODO parse via and return User object
+            return new User(_usr);
         } else {
-            console.log(`ERROR: Invalid user data type: ${typeof user}`)
             return null;
         }
     }
 
     /**
+     * UNUSED -> disabled
+     * TODO full user details, for parsing
+     * TODO validate permission (provide parentId)
+     *
+     * Registers user in database. User's ID is created uniquely.
+     * 
+     * @param {object} user - the User object
+     * @returns {(object|null)}  null in case of error; otherwise it returns a validated user object
+     */
+    // registerUser(user) {
+    //     if (user instanceof User) {
+    //         let id = user.getUserId()
+
+    //         // Check userId against database
+    //         if (this.get(id)) {
+    //             console.log(`ERROR: UserId ${userId} already exists.`)
+    //             return null;
+    //         }
+    //         else {
+    //             this.set(id, user.getUserData());
+    //             return user;
+    //         }
+    //     } else {
+    //         console.log(`ERROR: Invalid user data type: ${typeof user}`)
+    //         return null;
+    //     }
+    // }
+
+    /**
+     * UNUSED -> disabled
+     * 
+     * TODO validate permission (provide parentId)
      * 
      * @param {string} userId 
      */
-    removeUserById(userId) {
-        this.db.rm(userId);
-        // if (this.db.get(id)) {
-        //     this.db.
-        // } else {
-        //     return false;
-        // }
+    // removeUserById(userId, parentId) {
+    //     this.rm(userId);
+    // }
+
+    /**
+     * Update lastSeen to current time.
+     * 
+     * @param {string} id 
+     */
+    seenById(id) {
+        console.log('Seen: ', id);
+        this.update(id, (value) => {
+            value.lastSeen = Date.now();
+            return value;
+        });
     }
 }
 
@@ -147,17 +192,29 @@ export class UserDB extends Database {
  * TODO: Handle data validation according to schema.
  */
 export class RoomDB extends Database {
+
+    historySize = 10;
+
     constructor(filename = './data/rooms.json') {
         super(filename, 'ROOM_DB');
     }
 
-    addMessage(msg) {
-        // Future
-        // this.db.set(msg.header.roomId, msg.payload.value);
-
-        // Future2
-        // this.db.update(msg.header.roomId, updatefunction to append to value history queue);
-
-        this.db.set(msg.header.roomId, msg.payload.messageData);
+    /**
+     * Appends a data value to the start of the room message array; 
+     * respecting historySize.
+     * 
+     * @param {string} id - roomId
+     * @param {string} value - data value 
+     */
+    addMessage(id, value) {
+        // TODO Use a Message class for safe parsing
+        // TODO check array management for efficiency
+        this.update(id, (oldValue) => {
+            oldValue.unshift(value);
+            if (oldValue.length > this.historySize) {
+                return oldValue.slice(0, this.historySize);
+            }
+            return oldValue;
+        });
     }
 }

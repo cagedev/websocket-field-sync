@@ -7,11 +7,10 @@ import { User } from './models/user.js';
 // import { parseMessage } from './utils/utils.js';
 import { Message } from './models/message.js';
 
-import pkg from 'jsonwebtoken';
-const { verify: jwtVerify } = pkg;
+import { verifyClientId } from './utils/utils.js'
 
-// TODO Load from environment
-var jwtSecret = '$igningKey'
+// TODO Load from environment/file
+const jwtSecret = '$igningKey'
 
 // Load the default users database
 var userdb = new UserDB();
@@ -21,17 +20,7 @@ var roomdb = new RoomDB();
 
 // Create WebSocketServer
 const wss = new WebSocketServer({
-    port: 8080,
-    verifyClient: (info, done) => { 
-        let token = new URL(info.req.url, `http://${info.req.headers.host}`).searchParams.get('token');
-        console.log(token);
-
-        let decoded = jwtVerify(token, jwtSecret);
-        console.log(decoded.userId);
-
-        // console.log(info.req.headers.host);
-        done(false);
-    }
+    port: 8080
 });
 
 
@@ -48,6 +37,22 @@ const wss = new WebSocketServer({
 // 2. Create room
 // 3. Handle messages
 wss.on('connection', function connection(ws, request) {
+
+    // Verify jwt
+    let id = verifyClientId(request, jwtSecret);
+
+    // DEBUG
+    // console.log('id:', id);
+
+    if (id) {
+        // Update lastSeen in database
+        userdb.seenById(id);
+        // DEBUG
+        // console.log(userdb.getUserById(id));
+    } else {
+        console.log('closing connection');
+        ws.close();
+    }
 
     // console.log(ws._socket.address());
     // console.log(new URL(request.url, `http://${request.headers.host}`).searchParams.get('token'));
@@ -68,14 +73,23 @@ wss.on('connection', function connection(ws, request) {
     // userdb.removeUserById(usr2.getUserId());
     // /DEBUG
 
-    ws.send(JSON.stringify({
-        event: 'UPDATE',
-        payload: {
-            state: 'CONNECTED'
-        }
-    }));
+    // ws.send(JSON.stringify({
+    //     event: 'UPDATE',
+    //     payload: {
+    //         state: 'CONNECTED'
+    //     }
+    // }));
 
     ws.on('message', function (data) {
+
+        // DEBUG
+        console.log(`[message]: ${data.toString()}`);
+
+        // Update lastSeen in database
+        userdb.seenById(id);
+
+        // DEBUG
+        // ws.roomId = 'testId';
 
         let msg;
         try {
@@ -84,110 +98,29 @@ wss.on('connection', function connection(ws, request) {
             console.log(e.message);
         }
         if (msg) {
-            // if (msg.event == 'SERVER_REQUEST') {
 
-            //     // handle request
-            //     if (msg.payload.requestedData == 'USER_ID') {
-            //         // generate id
-            //         // let userId = uuid_NIL;
-            //         let userId = uuid_v4();
-            //         // set messages list for id to empty array
-            //         msgdb.set(userId,
-            //             { history: [], roomIds: [] } // also empty array for roomIds?
-            //         );
-            //         // send RESPONSE
-            //         ws.send(
-            //             JSON.stringify({
-            //                 event: "RESPONSE",
-            //                 payload: {
-            //                     type: "UPDATE",
-            //                     var: "USER_ID",
-            //                     value: userId,
-            //                 }
-            //             })
-            //         );
-            //     } else if (msg.payload.requestedData == 'ROOM_ID') {
-            //         if (msg.wfsData.userId) {
-            //             console.log(msg.wfsData.userId);
-
-            //             let usr = userdb.get(msg.wfsData.userId);
-            //             try {
-            //                 usr = JSON.parse(usr);
-            //             }
-            //             catch (e) {
-            //                 console.log("Error:", e.message);
-            //                 return null; // ??
-            //             }
-
-            //             // If userId exists in database
-            //             if (usr) {
-            //                 // Y: check if user has existing room(s)
-
-            //                 // Y: return rooms
-            //                 // N: generate roomId
-            //                 // set roomId
-            //                 // return roomId  
-            //                 // generate id
-            //                 let roomId = uuid_v4();
-
-            //                 db.update(
-            //                     msg.wfsData.userId, function (value) {
-            //                         let val = JSON.parse(value);
-            //                         val.roomIds.push(roomId);
-            //                         console.log(val);
-            //                         return JSON.stringify(val);
-            //                     }
-            //                 );
-
-            //                 // send RESPONSE
-            //                 ws.send(
-            //                     JSON.stringify({
-            //                         event: "RESPONSE",
-            //                         payload: {
-            //                             type: "UPDATE",
-            //                             var: "ROOM_ID",
-            //                             value: roomId,
-            //                         }
-            //                     })
-            //                 );
-            //             } else {
-            //                 console.log("[Error] userId does not exist", msg.wfsData.userId);
-            //             }
-            //         } else {
-            //             console.log("[Error] userId missing:", msg.wfsData);
-            //         }
-
-            //     }
-            //     else {
-            //         console.log(`[Error] Unrecognized SERVER_REQUEST: ${msg.payload.requestedData}`)
-            //     }
-            // }
-            // else 
             if (msg.event = 'DATA_MESSAGE') {
                 // DEBUG
                 // console.log('DATA_MESSAGE', msg.payload);
 
-                roomdb.addMessage(msg);
+                let _roomId = msg.getRoomId();
+                let _data = msg.getData();
 
-                // Log message to database
-                // TODO: Check if userId is in the active connections pool
-                // if (msg.wfsData.userId) {
-                //     db.update(
-                //         msg.wfsData.userId, function (value) {
-                //             let val = JSON.parse(value);
-                //             val.history.push(msg.payload.messageData);
-                //             console.log(val);
-                //             return JSON.stringify(val);
-                //         }
-                //     );
-                // }
-                // db.set('message', data.toString());
+                // Check if user is permitted to send data
+                if (userdb.getUserById(id).isAllowedToSendToRoom(_roomId)) {
 
-                // Broadcast all incoming messages to all clients
-                // TODO restrict rooms
-                wss.clients.forEach(function (client) {
-                    client.send(data.toString());
-                });
+                    // DEBUG
+                    console.log(`roomdb.addMessage(${_roomId}, ${_data})`);
+
+                    roomdb.addMessage(_roomId, _data);
+
+                    // Broadcast all incoming messages to all clients
+                    // TODO restrict rooms
+
+                    wss.clients.forEach(function (client) {
+                        client.send(data.toString());
+                    });
+                }
             }
         }
 

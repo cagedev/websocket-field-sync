@@ -68,6 +68,16 @@ export class Message {
         }
     }
 
+    getData() {
+        // TODO return correct data based on message type
+        // Assume this is a 'DATA_MESSAGE':
+        return this.payload.messageData; 
+    }
+
+    getRoomId() {
+        return this.header.roomId;
+    }
+
     toString() {
         return JSON.stringify(this);
     }

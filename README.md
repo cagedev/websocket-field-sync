@@ -75,28 +75,17 @@ Current implementation:
 
 ```json
 wfsData = {
-    "roomId"   = wfsConfig.roomId;
+    "roomId"   = wfsConfig.roomId; // May be omitted in first message 
     "syncType" = wfsConfig.syncType;
-    "userId"   = wfsConfig.userId;
+    "userId"   = wfsConfig.userId; // (deprecated) contained in JWT
     "userName" = wfsConfig.userName;
 }
 ```
 
-Server pushes `'UPDATE'` messages in response to (websocket) events or (`'SERVER_REQUEST'`) client messages. Client and server exchange actual sync data with the `'DATA_MESSAGE'`. Client-to-server messages are validated; server responds with an appropriate error. Client 
+### Exchange (TODO)
+ 1. Client initializes connection with a WebSocket connection to a URI containing a JWT in the `token`-parameter ([method 2](https://websockets.readthedocs.io/en/latest/topics/authentication.html)).
+ 2. Client selects a roomId for communication in this connection.
 
-| Event            | Payload                                                                                    |  roomId  | syncType |  userId  | userName |
-| :--------------- | :----------------------------------------------------------------------------------------- | :------: | :------: | :------: | :------: |
-| `UPDATE`         | `state` : String                                                                           |          | required |          | optional |
-| `SERVER_REQUEST` | `requestedData : String ` from `["USER_ID", "ROOM_ID", "MESSAGE_HISTORY"]`                 |          | required |          | optional |
-|                  | `requestedData = "USER_ID"`                                                                |          | required |          | optional |
-|                  | `requestedData = "ROOM_ID"`                                                                |          | required | required | optional |
-|                  | `requestedData = "MESSAGE_HISTORY"`                                                        | required | required | required | optional |
-| `DATA_MESSAGE`   | `messageData : String \| JSON`                                                             | required | required | required | optional |
-| `RESPONSE`       | `type : String` from `["UPDATE"]`,                                                         |   none   |   none   |   none   |   none   |
-|                  | `var : String` <variable_name> from `[ "STATE", "USER_ID", "ROOM_ID", "MESSAGE_HISTORY" ]` |          |          |          |          |
-|                  | `value : String \| Object` <variable_value>                                                |          |          |          |          |
-| `ERROR`          | `type : String` from `["INVALID_VARIABLE", "MALFORMED_REQUEST"]`                           |   none   |   none   |   none   |   none   |
-|                  | `var : String` <variable_name> from `[ "USER_ID", "ROOM_ID" ]`                             |          |          |          |          |
 
 ## TODO
  - [x] Basic websocket echo-to-all

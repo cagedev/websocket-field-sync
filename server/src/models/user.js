@@ -1,25 +1,10 @@
 import { v4 as uuid_v4 } from 'uuid';
 
+import { isUUID } from '../utils/utils.js'
 
-// TODO: Handle validation
-// var userSchemaJSON = {
-//     key: userId,
-//     value: {
-//         name: "Display Name",
-//         roomIds:
-//             [
-//                 "",
-//             ],
-//         permissions:
-//         {
-//             createNewRoom: true,
-//             maxRooms: 1,
-//         },
-//         lastSeen: "" // DateTime of last update
-//     }
-// }
-
-
+/**
+ * Class for storing user data. Contains permission logic.
+ */
 export class User {
 
     id;
@@ -27,10 +12,12 @@ export class User {
     roomIds = [];
     permissions = {
         maxRooms: 1,
-        createUser: false,
-        editUser: false,
+        viewRoomsList: false,
+        // createRooms: false,
+        // createUser: false,
+        // editUser: false,
     };
-    lastSeen = null;
+    lastSeen = null; // timestamp (ms)
     // parentId
 
     /**
@@ -43,19 +30,46 @@ export class User {
         if (userData) {
             try {
                 this.name = userData.name;
-                this.roomIds = userData.roomIds;
-                this.permissions = userData.permissions;
-                this.lastSeen = userData.lastSeen;
             } catch (e) {
-                console.log(`ERROR ${e.message}; invalid/incomplete userData`);
+                console.log(`ERROR ${e.message}; no username provided.`);
                 return null;
             }
+            // Use default values if no data provided
+            this.roomIds = userData.roomIds || this.roomIds;
+            this.permissions = userData.permissions || this.permissions;
+            this.lastSeen = userData.lastSeen || this.lastSeen;
 
+            // Generate new uuid if no valid uuid provided
+            this.id = isUUID(userData.id) ? userData.id : uuid_v4();
         }
-
-        // Generate a new userId
-        this.id = uuid_v4();
     }
+
+    /**
+     * Returns true if the current user may send data to the specified room.
+     * 
+     * @param {string} roomId 
+     * @returns {boolean}
+     */
+    isAllowedToSendToRoom(roomId) {
+        if (this.roomIds.indexOf(roomId) >= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * UNUSED -> disabled
+     * Returns true if the current user may receive data from the specified room.
+     * 
+     * @param {string} roomId 
+     * @returns {boolean}
+     */
+    // isAllowedToReceiveFromRoom(roomId) {
+    //     if (this.roomIds.indexOf(roomId) >= 0) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     /**
      * Returns user id.

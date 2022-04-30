@@ -14,3 +14,25 @@ export function isUUID(uuid) {
 
     return true;
 }
+
+import pkg from 'jsonwebtoken';
+const { verify: jwtVerify } = pkg;
+
+/**
+ * Verifies the 
+ * @param {object} request - Node (?) request object
+ * @param {string} jwtSecret - private JWT secet 
+ * @param {string} [tokenName='token'] - JWT token parameter key label; defaults to 'token'
+ * @returns 
+ */
+export function verifyClientId(request, jwtSecret, tokenName = 'token') {
+    let token = new URL(request.url, `http://${request.headers.host}`).searchParams.get(tokenName);
+    let status = jwtVerify(token, jwtSecret, (error, decoded) => {
+        if (error) {
+            return false;
+        } else {
+            return decoded.userId;
+        }
+    });
+    return status;
+}

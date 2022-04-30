@@ -24,7 +24,11 @@
     <br />
 
     <label for="token">token</label>
-    <input type="text" id="token" name="token" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">
+    <select type="text" id="token" name="token" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">
+    <option value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">value 0 (valid)</option>
+    <option value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">value 1 (valid)</option>
+    <option value="dyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">value 2 (invalid)</option>
+    </select>
     <br />
 
     <label for="userName">userName</label>
@@ -131,14 +135,16 @@
 
       // TODO request connectionId
       // TODO define datastructure
-      updateWfsData();
-      wfsConnection.send(JSON.stringify({
-        event: "SERVER_REQUEST",
-        wfsData: wfsData,
-        payload: {
-          requestedData: "USER_ID",
-        }
-      }));
+
+      // OLD TODO new login procedure
+      // updateWfsData();
+      // wfsConnection.send(JSON.stringify({
+      //   event: "SERVER_REQUEST",
+      //   wfsData: wfsData,
+      //   payload: {
+      //     requestedData: "USER_ID",
+      //   }
+      // }));
 
       // TODO start statusMonitor
       //  - timeSinceLastMessage
@@ -197,6 +203,10 @@
           console.log("Unrecognised message:", msg);
       }
 
+    };
+
+    wfsConnection.onclose = function (event) {
+      console.log('Connection closed.')
     };
 
     // TODO
