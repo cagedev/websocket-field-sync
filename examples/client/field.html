@@ -63,180 +63,40 @@
   </form>
 
   <form id="wfs-data">
-    <textarea id="targetField" name="targetField">This is the target field.</textarea>
+    <textarea id="targetField" 
+              name="targetField" 
+              data-entangle-room-id="default"
+              data-entangle-room-id-comment="This is either a valid UUID to be passed directly or an update request."
+              data-entangle-update-event="onchange" 
+              data-entangle-update-event="This is the update event, if unset there is no event listener set."
+              data-entangle-update-event-element="targetField" 
+              data-entangle-update-event-parameter-comment="This is either "
+              data-entangle-update-timer="60000" 
+              data-entangle-update-timer-comment="This is the event timer timeout in ms. If unset there is no timer."
+              data-entangle-sync-type="SEND" 
+              data-entangle-sync-type-comment="One from the following list: ['SEND', 'RECEIVE', 'SYNC']. Currenttly only 'SEND' is implemented."
+              >
+              This is the target field.
+            </textarea>
     <br />
 
-    <textarea id="targetField2" name="targetField2">This is targetField2.</textarea>
-    <br />
+    <!-- <textarea id="targetField2" name="targetField2">This is targetField2.</textarea>
+    <br /> -->
 
     <button type="submit" id="wfs-connect">connect</button>
     <button type="button" id="wfs-send">send</button>
   </form>
 </body>
 
+<script src="../../lib/entangle.js" data-server-uri="ws://127.0.0.1:8080"></script>
 <script>
-  var wfsConnection = null;
+var wfsConnection = null;
   var wfsConfig = {}
   var wfsData = {
     userName: '',
     userId: '',
     roomId: '',
     syncType: '',
-  }
-
-
-  function updateWfsData() {
-    // Hacky because no two way sync
-    // This should include the connections as an array
-
-    // Update relevant part of wfsData from wfsConfig
-    wfsData.roomId = wfsConfig.roomId;
-    wfsData.syncType = wfsConfig.syncType;
-    wfsData.userId = wfsConfig.userId;
-    wfsData.userName = wfsConfig.userName;
-  }
-
-
-  // Event handlers
-  // => handleConfigureButton?
-  function handleConfigureButton(event) {
-    event.preventDefault();
-    const formdata = new FormData(event.target);
-    wfsConfig = Object.fromEntries(formdata.entries());
-
-    // DEBUG
-    console.log('wfsConfig', wfsConfig);
-
-    // Set event handler
-    let evt = wfsConfig.updateEvent;
-    let id = wfsConfig.eventElementId;
-    document.getElementById(id).addEventListener(evt, function (event) {
-      console.log(event);
-      updateWfsData();
-      wfsConnection.send(JSON.stringify({
-        event: "DATA_MESSAGE",
-        wfsData: wfsData,
-        payload: {
-          messageData: document.getElementById(id).value,
-        }
-      }));
-    })
-  }
-
-  // => handleConnectButtonButton?
-  function handleConnectButton(event) {
-    event.preventDefault();
-    wfsConnection = new WebSocket(`${wfsConfig.serverUrl}?token=${wfsConfig.token}`, "json");
-
-    wfsConnection.onopen = function (event) {
-
-      // DEBUG
-      console.log("wfsConnection.onopen");
-
-      // TODO request connectionId
-      // TODO define datastructure
-
-      // OLD TODO new login procedure
-      // updateWfsData();
-      // wfsConnection.send(JSON.stringify({
-      //   event: "SERVER_REQUEST",
-      //   wfsData: wfsData,
-      //   payload: {
-      //     requestedData: "USER_ID",
-      //   }
-      // }));
-
-      // TODO start statusMonitor
-      //  - timeSinceLastMessage
-      //  - connectionSpeed
-    };
-
-    wfsConnection.onmessage = function (event) {
-      // DEBUG
-      let msg = JSON.parse(event.data);
-
-      console.log("wfsConnection.onmessage");
-
-      // Interpret message
-      // Assume event/payload-structure
-      // Use a connection structure
-      switch (msg.event) {
-
-        case "MESSAGE":
-          console.log("MESSAGE:", msg.payload);
-          break;
-
-        case "RESPONSE":
-          console.log("RESPONSE:", msg.payload);
-
-          if (msg.payload.var == "USER_ID") {
-            wfsConfig.userId = msg.payload.value;
-            document.getElementById("userId").value = wfsConfig.userId;
-            updateWfsData();
-            wfsConnection.send(JSON.stringify({
-              event: "SERVER_REQUEST",
-              wfsData: wfsData,
-              payload: {
-                requestedData: "ROOM_ID",
-              }
-            }));
-          }
-
-          else if (msg.payload.var == "ROOM_ID") {
-            wfsConfig.roomId = msg.payload.value;
-            document.getElementById("roomId").value = wfsConfig.roomId;
-          }
-
-          else {
-            console.log("Error: Invalid RESPONSE payload", msg.payload);
-          }
-          break;
-
-        case "UPDATE":
-          console.log("UPDATE:", msg.payload);
-          wfsConfig.state = msg.payload.state;
-          // DEBUG
-          console.log("wfsConfig:", wfsConfig);
-          break;
-
-        default:
-          console.log("Unrecognised message:", msg);
-      }
-
-    };
-
-    wfsConnection.onclose = function (event) {
-      console.log('Connection closed.')
-    };
-
-    // TODO
-    // setup wfs-link with current parameters
-    // ? auth on serverUrl
-    // - connect to serverUrl
-    // - send setup message
-    // - set local data event handler
-    //   - on event
-    //   - update data package
-    //   - send data
-    // - set external event handler
-    //   - on message
-    //   - update local data package
-    //   - update local data field (do not fire handler)
-  };
-
-  function handleSendButton(event) {
-    // TODO use prototype 
-    updateWfsData();
-    let msg = {
-      event: "DATA_MESSAGE",
-      wfsData: wfsData,
-      payload: {
-        updateType: "FULL", // {FULL, UPDATE/DIFF}
-        messageData: document.getElementById(wfsConfig.dataElementId).value,
-      }
-    }
-    console.log('handleSendButton', msg);
-    wfsConnection.send(JSON.stringify(msg));
   }
 
   // Set up event handlers
