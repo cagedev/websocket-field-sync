@@ -38,10 +38,10 @@ class Database {
         });
 
         // DEBUG
-        // this.db.on('drain', () => {
-        //     this.db.compact();
-        //     console.log(`All records saved to disk; ${this.db.redundantLength} redundant records.`);
-        // });
+        this.db.on('drain', () => {
+            this.db.compact();
+            console.log(`All records saved to disk; ${this.db.redundantLength} redundant records.`);
+        });
 
         // DEBUG
         // this.db.on('compacted', () => {

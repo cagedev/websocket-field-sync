@@ -38,7 +38,8 @@ const wss = new WebSocketServer({
 // 3. Handle messages
 wss.on('connection', function connection(ws, request) {
 
-    // Verify jwt
+    // Verify jwt (this is done _once_ upon establishing the connection)
+    // TODO rename verified variables
     let id = verifyClientId(request, jwtSecret);
 
     // DEBUG
@@ -47,6 +48,7 @@ wss.on('connection', function connection(ws, request) {
     if (id) {
         // Update lastSeen in database
         userdb.seenById(id);
+        
         // DEBUG
         // console.log(userdb.getUserById(id));
     } else {
@@ -80,12 +82,13 @@ wss.on('connection', function connection(ws, request) {
     //     }
     // }));
 
+    // Handle an incoming 'message'; the userId is still available here.
     ws.on('message', function (data) {
 
         // DEBUG
-        console.log(`[message]: ${data.toString()}`);
+        // console.log(`[message]: ${data.toString()}`);
 
-        // Update lastSeen in database
+        // Update lastSeen in database (unsafe)
         userdb.seenById(id);
 
         // DEBUG
@@ -115,8 +118,8 @@ wss.on('connection', function connection(ws, request) {
                     roomdb.addMessage(_roomId, _data);
 
                     // Broadcast all incoming messages to all clients
-                    // TODO restrict rooms
-
+                    // TODO restrict to rooms
+                    // TODO use 'Message' class for standardizing serialization
                     wss.clients.forEach(function (client) {
                         client.send(data.toString());
                     });
