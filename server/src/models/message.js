@@ -6,6 +6,9 @@ import { isUUID } from '../utils/utils.js'
 /**
  * Yup websocket message validation schemas
  * 
+ * TODO Create validation schema for partial objects
+ * TODO
+ * 
  * @type {Object.<string, yup.Schema, yup.Schema>}
  */
 const messageSchema = yup.object({
@@ -47,12 +50,25 @@ export class Message {
     payload;
     header;
 
+    /**
+     * Construct a new Massage. 
+     * Either pass seperate 'event', 'payload' and 'header' or a single parseable JSON string.
+     * 
+     * TODO documentation
+     * 
+     * @param {(object|string)} evt - event object or JSON string
+     * @param {(object|null))} pld - payload object (optional)
+     * @param {(object|null)} hdr - header object (optional)
+     */
     constructor(evt, pld, hdr) {
-        if (pld && hdr) {
+        if (evt && pld && hdr) {
+            // If all parameters are defined, assume they are event, payload and header .
+            // TODO validate these seperately.
             this.event = evt;
             this.payload = pld;
             this.header = hdr;
-        } else {
+        } else if (evt && !pld & !hdr) {
+            // If only the evt is defined, assume this is JSON data.
             let data = evt;
             let msg;
             try {
@@ -71,11 +87,15 @@ export class Message {
     getData() {
         // TODO return correct data based on message type
         // Assume this is a 'DATA_MESSAGE':
-        return this.payload.messageData; 
+        return this.payload.messageData;
     }
 
     getRoomId() {
         return this.header.roomId;
+    }
+
+    getSender() {
+        return this.header.userId;
     }
 
     toString() {
