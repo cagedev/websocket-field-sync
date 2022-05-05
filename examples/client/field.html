@@ -17,47 +17,53 @@
 </head>
 
 <body>
+  [<a href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">token 0 (valid)</a> |
+  <a href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token 1 (valid)</a> |
+  <a href="?token=dyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token 2 (invalid)</a>]
+  <br />
+
   <form id="wfs-config">
 
-    <label for="serverUrl">serverUrl</label>
+    <!-- <label for="serverUrl">serverUrl</label>
     <input type="text" id="serverUrl" name="serverUrl" value="ws://127.0.0.1:8080">
-    <br />
+    <br /> -->
 
-    <label for="token">token</label>
+    <!-- <label for="token">token</label>
     <select type="text" id="token" name="token" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">
     <option value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">value 0 (valid)</option>
     <option value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">value 1 (valid)</option>
     <option value="dyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">value 2 (invalid)</option>
     </select>
-    <br />
+    <br /> -->
 
     <label for="userName">userName</label>
     <input type="text" id="userName" name="userName" value="Test User">
     <br />
 
-    <label for="userId">userId</label>
+    <!-- Users need not know their own id -->
+    <!-- <label for="userId">userId</label>
     <input type="text" id="userId" name="userId" value="00000000-0000-0000-0000-000000000000" />
-    <br />
+    <br /> -->
 
-    <label for="roomId">roomId</label>
+    <!-- <label for="roomId">roomId</label>
     <input type="text" id="roomId" name="roomId" value="default" />
-    <br />
+    <br /> -->
 
-    <label for="dataElementId">dataElementId</label>
+    <!-- <label for="dataElementId">dataElementId</label>
     <input type="text" id="dataElementId" name="dataElementId" value="targetField" />
-    <br />
+    <br /> -->
 
-    <label for="updateEvent">updateEvent</label>
+    <!-- <label for="updateEvent">updateEvent</label>
     <input type="text" id="updateEvent" name="updateEvent" value="onchange" />
-    <br />
+    <br /> -->
 
-    <label for="eventElementId">eventElementId</label>
+    <!-- <label for="eventElementId">eventElementId</label>
     <input type="text" id="eventElementId" name="eventElementId" value="targetField" />
-    <br />
+    <br /> -->
 
-    <label for="syncType">syncType</label>
+    <!-- <label for="syncType">syncType</label>
     <input type="text" id="syncType" name="syncType" value="SEND" />
-    <br />
+    <br /> -->
 
     <button type="submit">configure</button>
   </form>
@@ -68,9 +74,9 @@
               data-entangle-room-id="default"
               data-entangle-room-id-comment="This is either a valid UUID to be passed directly or an update request."
               data-entangle-update-event="onchange" 
-              data-entangle-update-event="This is the update event, if unset there is no event listener set."
+              data-entangle-update-event-comment="This is the update event, if unset there is no event listener set."
               data-entangle-update-event-element="targetField" 
-              data-entangle-update-event-parameter-comment="This is either "
+              data-entangle-update-event-element-comment="The id of the element with the event listene"
               data-entangle-update-timer="60000" 
               data-entangle-update-timer-comment="This is the event timer timeout in ms. If unset there is no timer."
               data-entangle-sync-type="SEND" 
