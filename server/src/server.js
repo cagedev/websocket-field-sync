@@ -46,6 +46,9 @@ wss.on('connection', function connection(ws, request) {
     // console.log('id:', id);
 
     if (id) {
+        // OPTION Add room info to ws-metadata
+        // OPTION Maintain a Map of active connections
+
         // Update lastSeen in database
         userdb.seenById(id);
         
@@ -94,12 +97,14 @@ wss.on('connection', function connection(ws, request) {
         // DEBUG
         // ws.roomId = 'testId';
 
+        // Coerce message into a validated Message
         let msg;
         try {
             msg = new Message(data);
         } catch (e) {
             console.log(e.message);
         }
+
         if (msg) {
 
             if (msg.event = 'DATA_MESSAGE') {
@@ -115,14 +120,18 @@ wss.on('connection', function connection(ws, request) {
                     // DEBUG
                     console.log(`roomdb.addMessage(${_roomId}, ${_data})`);
 
+                    // Log message to database
                     roomdb.addMessage(_roomId, _data);
+
+                    // TODO Send message to all room users
+                    // message.sendMessageToRoom(message, roomId, wsMap/wss.clients, includeSelf = false)
 
                     // Broadcast all incoming messages to all clients
                     // TODO restrict to rooms
                     // TODO use 'Message' class for standardizing serialization
-                    wss.clients.forEach(function (client) {
-                        client.send(data.toString());
-                    });
+                    // wss.clients.forEach(function (client) {
+                    //     client.send(data.toString());
+                    // });
                 }
             }
         }
