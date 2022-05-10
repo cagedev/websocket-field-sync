@@ -65,25 +65,28 @@
     <input type="text" id="syncType" name="syncType" value="SEND" />
     <br /> -->
 
-    <button type="submit">configure</button>
+    <!-- <button type="submit">configure</button> -->
   </form>
 
   <form id="wfs-data">
+    <label for="targetField">targetField</label>
     <textarea id="targetField" 
               name="targetField" 
               data-entangle-room-id="default"
               data-entangle-room-id-comment="This is either a valid UUID to be passed directly or an update request."
-              data-entangle-update-event="onchange" 
+              data-entangle-update-event="onchangeY" 
               data-entangle-update-event-comment="This is the update event, if unset there is no event listener set."
               data-entangle-update-event-element="targetField" 
               data-entangle-update-event-element-comment="The id of the element with the event listene"
               data-entangle-update-timer="60000" 
               data-entangle-update-timer-comment="This is the event timer timeout in ms. If unset there is no timer."
-              data-entangle-sync-type="SEND" 
+              data-entangle-sync-type="SENDY" 
               data-entangle-sync-type-comment="One from the following list: ['SEND', 'RECEIVE', 'SYNC']. Currenttly only 'SEND' is implemented."
-              >
-              This is the target field.
-            </textarea>
+              >This is the target field.</textarea>
+    <br />
+
+    <label for="status">status</label>
+    <input type="text" id="status" name="status" value="" />
     <br />
 
     <!-- <textarea id="targetField2" name="targetField2">This is targetField2.</textarea>
@@ -106,7 +109,7 @@ var wfsConnection = null;
   }
 
   // Set up event handlers
-  document.getElementById('wfs-config').addEventListener('submit', handleConfigureButton);
+  // document.getElementById('wfs-config').addEventListener('submit', handleConfigureButton);
   document.getElementById('wfs-data').addEventListener('submit', handleConnectButton);
   document.getElementById('wfs-send').addEventListener('click', handleSendButton);
 </script>
