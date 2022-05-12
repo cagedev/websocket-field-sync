@@ -17,9 +17,15 @@
 </head>
 
 <body>
-  [<a href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">token 0 (valid)</a> |
-  <a href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token 1 (valid)</a> |
-  <a href="?token=dyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token 2 (invalid)</a>]
+  [<a
+    href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8">token
+    0 (valid)</a> |
+  <a
+    href="?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token
+    1 (valid)</a> |
+  <a
+    href="?token=dyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEzMDY5MjUsImV4cCI6MTY4Mjg0MjkyNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImUzMTBlMzNkLWUxNzItNDY0NC1iNmUwLWFlZWM3NDljMTFlYyJ9.bX0mp4rmSOut60t8TMJQlVQXWrVWCvxjGKTrAPynkEg">token
+    2 (invalid)</a>]
   <br />
 
   <form id="wfs-config">
@@ -70,23 +76,25 @@
 
   <form id="wfs-data">
     <label for="targetField">targetField</label>
-    <textarea id="targetField" 
-              name="targetField" 
-              data-entangle-room-id="default"
-              data-entangle-room-id-comment="This is either a valid UUID to be passed directly or an update request."
-              data-entangle-update-event="onchangeY" 
-              data-entangle-update-event-comment="This is the update event, if unset there is no event listener set."
-              data-entangle-update-event-element="targetField" 
-              data-entangle-update-event-element-comment="The id of the element with the event listene"
-              data-entangle-update-timer="60000" 
-              data-entangle-update-timer-comment="This is the event timer timeout in ms. If unset there is no timer."
-              data-entangle-sync-type="SENDY" 
-              data-entangle-sync-type-comment="One from the following list: ['SEND', 'RECEIVE', 'SYNC']. Currenttly only 'SEND' is implemented."
-              >This is the target field.</textarea>
+    <textarea id="targetField" name="targetField" data-entangle-room-id="default"
+      data-entangle-room-id-comment="This is either a valid UUID to be passed directly or an update request."
+      data-entangle-update-event="onchange"
+      data-entangle-update-event-comment="This is the update event, if unset there is no event listener set."
+      data-entangle-update-event-element="targetField"
+      data-entangle-update-event-element-comment="The id of the element with the event listene"
+      data-entangle-update-timer="60000"
+      data-entangle-update-timer-comment="This is the event timer timeout in ms. If unset there is no timer."
+      data-entangle-sync-type="SEND"
+      data-entangle-sync-type-comment="One from the following list: ['SEND', 'RECEIVE', 'SYNC']. Currenttly only 'SEND' is implemented."
+      data-entangle-status-element-id="status2"
+      data-entangle-status-element-id-comment="One from the following list: ['SEND', 'RECEIVE', 'SYNC']. Currenttly only 'SEND' is implemented.">This is the target field.</textarea>
     <br />
 
     <label for="status">status</label>
     <input type="text" id="status" name="status" value="" />
+
+    <div id="status2" style="width: 100px; height: 100px; background-color: grey;"></div>
+
     <br />
 
     <!-- <textarea id="targetField2" name="targetField2">This is targetField2.</textarea>
@@ -97,9 +105,10 @@
   </form>
 </body>
 
-<script src="../../lib/entangle.js" data-server-uri="ws://127.0.0.1:8080" data-token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8"></script>
+<script src="../../lib/entangle.js" data-server-uri="ws://127.0.0.1:8080"
+  data-token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTEyNDA1NjIsImV4cCI6MTY4Mjc3NjY1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInVzZXJJZCI6ImQzN2JlNmE4LWM0M2YtNDhjZS1iZWMxLWExODEyNmUwNWQ2MCJ9.Lgk7uVRNeR89kOIYR5aT6gVaOfj1BtSqCSzlyLKCkO8"></script>
 <script>
-var wfsConnection = null;
+  var wfsConnection = null;
   var wfsConfig = {}
   var wfsData = {
     userName: '',
